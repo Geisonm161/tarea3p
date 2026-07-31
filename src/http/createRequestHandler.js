@@ -23,6 +23,9 @@ function createRequestHandler({ taskController, publicDirectory }) {
       if (url.pathname === '/api/tasks/export.csv' && request.method === 'GET') {
         return await taskController.export(request, response, url);
       }
+      if (url.pathname === '/api/tasks/summary' && request.method === 'GET') {
+        return await taskController.summary(request, response, url);
+      }
       if (taskMatch && request.method === 'GET') {
         return await taskController.get(request, response, url, taskMatch[1]);
       }

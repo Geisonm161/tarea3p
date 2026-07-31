@@ -67,6 +67,7 @@ test/                    Pruebas unitarias y de integración
 | `PUT` | `/api/tasks/:id` | Actualiza una tarea |
 | `DELETE` | `/api/tasks/:id` | Elimina una tarea |
 | `GET` | `/api/tasks/export.csv` | Descarga las tareas en CSV |
+| `GET` | `/api/tasks/summary` | Devuelve los totales globales por estado |
 
 Ejemplo del cuerpo para creación o actualización:
 

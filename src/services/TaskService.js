@@ -47,6 +47,15 @@ class TaskService {
     return task;
   }
 
+  async getSummary() {
+    const tasks = await this.repository.findAll();
+    return tasks.reduce((summary, task) => {
+      summary.total += 1;
+      summary[task.status] += 1;
+      return summary;
+    }, { total: 0, pending: 0, 'in-progress': 0, completed: 0 });
+  }
+
   async create(input) {
     const values = this.#validate(input);
     const now = new Date().toISOString();
