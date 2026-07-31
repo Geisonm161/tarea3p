@@ -91,6 +91,10 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
 .status-badge--pending { background: #fff3d7; color: #96630b; }
 .status-badge--in-progress { background: #e2f2ff; color: #176aa8; }
 .status-badge--completed { background: #def7e9; color: #197144; }
+.priority-badge { padding: 4px 8px; border-radius: 999px; font-size: .68rem; font-weight: 800; }
+.priority-badge--low { background: #eef1f5; color: #596275; }
+.priority-badge--medium { background: #fff0d8; color: #956009; }
+.priority-badge--high { background: #fee6ea; color: #b12f40; }
 
 .modal { width: min(560px, calc(100% - 32px)); padding: 0; border: 0; border-radius: 17px; color: var(--ink); box-shadow: 0 26px 80px rgb(23 32 51 / 30%); }
 .modal::backdrop { background: rgb(23 32 51 / 58%); backdrop-filter: blur(3px); }
