@@ -22,6 +22,7 @@ const elements = {
   saveButton: document.querySelector('#save-button'),
   deleteName: document.querySelector('#delete-task-name'),
   confirmDelete: document.querySelector('#confirm-delete-button'),
+  exportButton: document.querySelector('#export-button'),
 };
 
 const state = { tasks: [], taskToDelete: null, searchTimer: null };
@@ -108,6 +109,26 @@ function updateSummary() {
   document.querySelector('#pending-count').textContent = counts.pending;
   document.querySelector('#progress-count').textContent = counts['in-progress'];
   document.querySelector('#completed-count').textContent = counts.completed;
+  elements.exportButton.disabled = state.tasks.length === 0;
+}
+
+async function exportTasks() {
+  elements.exportButton.disabled = true;
+  try {
+    const response = await fetch('/api/tasks/export.csv');
+    if (!response.ok) throw new Error('No fue posible exportar las tareas.');
+    const downloadUrl = URL.createObjectURL(await response.blob());
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'taskflow-tasks.csv';
+    link.click();
+    URL.revokeObjectURL(downloadUrl);
+    showFeedback('La exportación se descargó correctamente.', true);
+  } catch (error) {
+    showFeedback(error.message);
+  } finally {
+    elements.exportButton.disabled = state.tasks.length === 0;
+  }
 }
 
 function openTaskModal(task = null) {
@@ -236,6 +257,7 @@ document.querySelector('#close-modal-button').addEventListener('click', () => el
 document.querySelector('#cancel-button').addEventListener('click', () => elements.taskModal.close());
 document.querySelector('#cancel-delete-button').addEventListener('click', () => elements.deleteModal.close());
 elements.confirmDelete.addEventListener('click', deleteTask);
+elements.exportButton.addEventListener('click', exportTasks);
 elements.form.addEventListener('submit', saveTask);
 elements.description.addEventListener('input', updateDescriptionCount);
 elements.filter.addEventListener('change', loadTasks);
