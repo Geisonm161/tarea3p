@@ -25,7 +25,12 @@ const elements = {
   exportButton: document.querySelector('#export-button'),
 };
 
-const state = { tasks: [], taskToDelete: null, searchTimer: null };
+const state = {
+  tasks: [],
+  summary: { total: 0, pending: 0, 'in-progress': 0, completed: 0 },
+  taskToDelete: null,
+  searchTimer: null,
+};
 const statusLabels = { pending: 'Pendiente', 'in-progress': 'En progreso', completed: 'Completada' };
 const priorityLabels = { low: 'Baja', medium: 'Media', high: 'Alta' };
 
@@ -53,11 +58,15 @@ async function loadTasks() {
     sort: elements.sort.value,
   });
   try {
-    state.tasks = await request(`/api/tasks?${params}`);
+    [state.tasks, state.summary] = await Promise.all([
+      request(`/api/tasks?${params}`),
+      request('/api/tasks/summary'),
+    ]);
     renderTasks();
   } catch (error) {
     showFeedback(error.message);
     state.tasks = [];
+    state.summary = { total: 0, pending: 0, 'in-progress': 0, completed: 0 };
     renderTasks();
   } finally {
     setLoading(false);
@@ -101,15 +110,11 @@ function renderTasks() {
 }
 
 function updateSummary() {
-  const counts = state.tasks.reduce((result, task) => {
-    result[task.status] += 1;
-    return result;
-  }, { pending: 0, 'in-progress': 0, completed: 0 });
-  document.querySelector('#total-count').textContent = state.tasks.length;
-  document.querySelector('#pending-count').textContent = counts.pending;
-  document.querySelector('#progress-count').textContent = counts['in-progress'];
-  document.querySelector('#completed-count').textContent = counts.completed;
-  elements.exportButton.disabled = state.tasks.length === 0;
+  document.querySelector('#total-count').textContent = state.summary.total;
+  document.querySelector('#pending-count').textContent = state.summary.pending;
+  document.querySelector('#progress-count').textContent = state.summary['in-progress'];
+  document.querySelector('#completed-count').textContent = state.summary.completed;
+  elements.exportButton.disabled = state.summary.total === 0;
 }
 
 async function exportTasks() {
@@ -127,7 +132,7 @@ async function exportTasks() {
   } catch (error) {
     showFeedback(error.message);
   } finally {
-    elements.exportButton.disabled = state.tasks.length === 0;
+    elements.exportButton.disabled = state.summary.total === 0;
   }
 }
 
