@@ -1,3 +1,5 @@
+const createTasksCsv = require('../utils/createTasksCsv');
+
 class TaskController {
   constructor(service) {
     this.service = service;
@@ -15,6 +17,15 @@ class TaskController {
   get = async (_request, response, _url, id) => {
     const task = await this.service.getById(id);
     this.#sendJson(response, 200, { data: task });
+  };
+
+  export = async (_request, response) => {
+    const tasks = await this.service.list({ sort: 'newest' });
+    response.writeHead(200, {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="taskflow-tasks.csv"',
+    });
+    response.end(createTasksCsv(tasks));
   };
 
   create = async (request, response) => {
