@@ -5,6 +5,7 @@ TaskFlow es una aplicación CRUD para administrar tareas. El proyecto demuestra 
 ## Funcionalidades
 
 - Crear tareas con título, descripción y estado.
+- Asignar prioridad baja, media o alta a cada tarea.
 - Consultar y buscar tareas por título o descripción.
 - Filtrar tareas por estado.
 - Editar datos y marcar tareas como completadas.

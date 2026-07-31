@@ -111,6 +111,15 @@
             </select>
             <span class="field-error" id="status-error"></span>
           </label>
+          <label class="form-field">
+            <span>Prioridad</span>
+            <select id="task-priority" name="priority">
+              <option value="low">Baja</option>
+              <option value="medium" selected>Media</option>
+              <option value="high">Alta</option>
+            </select>
+            <span class="field-error" id="priority-error"></span>
+          </label>
         </div>
         <footer class="modal__footer">
           <button class="button button--ghost" id="cancel-button" type="button">Cancelar</button>
@@ -144,6 +153,7 @@
           <div class="task-card__heading">
             <h2></h2>
             <span class="status-badge"></span>
+            <span class="priority-badge"></span>
           </div>
           <p></p>
           <time></time>
