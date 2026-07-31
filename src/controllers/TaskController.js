@@ -19,6 +19,11 @@ class TaskController {
     this.#sendJson(response, 200, { data: task });
   };
 
+  summary = async (_request, response) => {
+    const summary = await this.service.getSummary();
+    this.#sendJson(response, 200, { data: summary });
+  };
+
   export = async (_request, response) => {
     const tasks = await this.service.list({ sort: 'newest' });
     response.writeHead(200, {

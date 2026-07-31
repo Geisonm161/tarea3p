@@ -103,3 +103,22 @@ test('exporta las tareas como un archivo CSV', async () => {
     await testServer.close();
   }
 });
+
+test('devuelve totales globales en el resumen', async () => {
+  const testServer = await createTestServer();
+  try {
+    const { baseUrl } = testServer;
+    await fetch(`${baseUrl}/api/tasks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Tarea para resumen', status: 'in-progress' }),
+    });
+
+    const response = await fetch(`${baseUrl}/api/tasks/summary`);
+    const summary = (await response.json()).data;
+    assert.equal(summary.total, 1);
+    assert.equal(summary['in-progress'], 1);
+  } finally {
+    await testServer.close();
+  }
+});
