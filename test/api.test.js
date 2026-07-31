@@ -83,3 +83,23 @@ test('responde con errores de validación estructurados', async () => {
     await testServer.close();
   }
 });
+
+test('exporta las tareas como un archivo CSV', async () => {
+  const testServer = await createTestServer();
+  try {
+    const { baseUrl } = testServer;
+    await fetch(`${baseUrl}/api/tasks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Tarea, con coma', priority: 'high' }),
+    });
+
+    const response = await fetch(`${baseUrl}/api/tasks/export.csv`);
+    const csv = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), /text\/csv/);
+    assert.match(csv, /"Tarea, con coma"/);
+  } finally {
+    await testServer.close();
+  }
+});
