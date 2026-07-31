@@ -7,6 +7,7 @@ const elements = {
   feedback: document.querySelector('#feedback'),
   search: document.querySelector('#search-input'),
   filter: document.querySelector('#status-filter'),
+  sort: document.querySelector('#sort-filter'),
   taskModal: document.querySelector('#task-modal'),
   deleteModal: document.querySelector('#delete-modal'),
   form: document.querySelector('#task-form'),
@@ -45,7 +46,11 @@ async function request(url, options = {}) {
 async function loadTasks() {
   setLoading(true);
   hideFeedback();
-  const params = new URLSearchParams({ search: elements.search.value, status: elements.filter.value });
+  const params = new URLSearchParams({
+    search: elements.search.value,
+    status: elements.filter.value,
+    sort: elements.sort.value,
+  });
   try {
     state.tasks = await request(`/api/tasks?${params}`);
     renderTasks();
@@ -234,6 +239,7 @@ elements.confirmDelete.addEventListener('click', deleteTask);
 elements.form.addEventListener('submit', saveTask);
 elements.description.addEventListener('input', updateDescriptionCount);
 elements.filter.addEventListener('change', loadTasks);
+elements.sort.addEventListener('change', loadTasks);
 elements.search.addEventListener('input', () => {
   clearTimeout(state.searchTimer);
   state.searchTimer = setTimeout(loadTasks, 250);

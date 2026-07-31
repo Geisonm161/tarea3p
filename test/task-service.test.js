@@ -76,6 +76,21 @@ test('filtra por texto y estado', async () => {
   }
 });
 
+test('ordena las tareas por prioridad', async () => {
+  const { service, temporaryDirectory } = await createTestService();
+  try {
+    await service.create({ title: 'Tarea de prioridad baja', priority: 'low' });
+    await service.create({ title: 'Tarea de prioridad alta', priority: 'high' });
+    const tasks = await service.list({ sort: 'priority' });
+
+    assert.equal(tasks[0].priority, 'high');
+    assert.equal(tasks[1].priority, 'low');
+    await assert.rejects(service.list({ sort: 'unknown' }), (error) => error.statusCode === 400);
+  } finally {
+    await fs.rm(temporaryDirectory, { recursive: true, force: true });
+  }
+});
+
 test('actualiza y elimina una tarea', async () => {
   const { service, temporaryDirectory } = await createTestService();
   try {
