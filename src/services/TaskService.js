@@ -2,6 +2,7 @@ const { randomUUID } = require('node:crypto');
 const AppError = require('../errors/AppError');
 
 const VALID_STATUSES = new Set(['pending', 'in-progress', 'completed']);
+const VALID_PRIORITIES = new Set(['low', 'medium', 'high']);
 
 class TaskService {
   constructor(repository) {
@@ -63,6 +64,7 @@ class TaskService {
     const title = typeof input.title === 'string' ? input.title.trim() : '';
     const description = typeof input.description === 'string' ? input.description.trim() : '';
     const status = typeof input.status === 'string' ? input.status : 'pending';
+    const priority = typeof input.priority === 'string' ? input.priority : 'medium';
     const details = {};
 
     if (title.length < 3 || title.length > 80) {
@@ -74,11 +76,14 @@ class TaskService {
     if (!VALID_STATUSES.has(status)) {
       details.status = 'Selecciona un estado válido.';
     }
+    if (!VALID_PRIORITIES.has(priority)) {
+      details.priority = 'Selecciona una prioridad válida.';
+    }
     if (Object.keys(details).length > 0) {
       throw new AppError('Revisa los datos ingresados.', 400, details);
     }
 
-    return { title, description, status };
+    return { title, description, status, priority };
   }
 }
 

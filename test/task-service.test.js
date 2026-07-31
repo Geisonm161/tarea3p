@@ -23,6 +23,7 @@ test('crea y consulta una tarea', async () => {
 
     assert.match(created.id, /^[0-9a-f-]{36}$/);
     assert.equal(created.title, 'Preparar exposición');
+    assert.equal(created.priority, 'medium');
     assert.deepEqual(await service.list(), [created]);
   } finally {
     await fs.rm(temporaryDirectory, { recursive: true, force: true });
@@ -37,6 +38,20 @@ test('valida los datos antes de crear', async () => {
       (error) => error.statusCode === 400
         && Boolean(error.details.title)
         && Boolean(error.details.status),
+    );
+  } finally {
+    await fs.rm(temporaryDirectory, { recursive: true, force: true });
+  }
+});
+
+test('valida y conserva la prioridad de una tarea', async () => {
+  const { service, temporaryDirectory } = await createTestService();
+  try {
+    const task = await service.create({ title: 'Corregir incidencia', priority: 'high' });
+    assert.equal(task.priority, 'high');
+    await assert.rejects(
+      service.create({ title: 'Prioridad inválida', priority: 'urgent' }),
+      (error) => Boolean(error.details.priority),
     );
   } finally {
     await fs.rm(temporaryDirectory, { recursive: true, force: true });

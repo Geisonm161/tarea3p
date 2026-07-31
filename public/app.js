@@ -14,6 +14,7 @@ const elements = {
   title: document.querySelector('#title-input'),
   description: document.querySelector('#description-input'),
   status: document.querySelector('#task-status'),
+  priority: document.querySelector('#task-priority'),
   descriptionCount: document.querySelector('#description-count'),
   modalTitle: document.querySelector('#modal-title'),
   modalEyebrow: document.querySelector('#modal-eyebrow'),
@@ -24,6 +25,7 @@ const elements = {
 
 const state = { tasks: [], taskToDelete: null, searchTimer: null };
 const statusLabels = { pending: 'Pendiente', 'in-progress': 'En progreso', completed: 'Completada' };
+const priorityLabels = { low: 'Baja', medium: 'Media', high: 'Alta' };
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -75,6 +77,10 @@ function renderTasks() {
     const badge = card.querySelector('.status-badge');
     badge.textContent = statusLabels[task.status];
     badge.classList.add(`status-badge--${task.status}`);
+    const priority = task.priority || 'medium';
+    const priorityBadge = card.querySelector('.priority-badge');
+    priorityBadge.textContent = `Prioridad ${priorityLabels[priority].toLowerCase()}`;
+    priorityBadge.classList.add(`priority-badge--${priority}`);
     const date = new Date(task.updatedAt);
     const time = card.querySelector('time');
     time.dateTime = task.updatedAt;
@@ -106,6 +112,7 @@ function openTaskModal(task = null) {
   elements.title.value = task?.title || '';
   elements.description.value = task?.description || '';
   elements.status.value = task?.status || 'pending';
+  elements.priority.value = task?.priority || 'medium';
   elements.modalEyebrow.textContent = task ? 'Editar tarea' : 'Nueva tarea';
   elements.modalTitle.textContent = task ? 'Actualizar tarea' : 'Agregar tarea';
   elements.saveButton.querySelector('.button__label').textContent = task ? 'Guardar cambios' : 'Guardar tarea';
@@ -121,6 +128,7 @@ async function saveTask(event) {
     title: elements.title.value,
     description: elements.description.value,
     status: elements.status.value,
+    priority: elements.priority.value,
   };
   if (input.title.trim().length < 3) {
     showFieldErrors({ title: 'El título debe tener entre 3 y 80 caracteres.' });
@@ -153,6 +161,7 @@ async function toggleCompleted(task) {
         title: task.title,
         description: task.description,
         status: task.status === 'completed' ? 'pending' : 'completed',
+        priority: task.priority || 'medium',
       }),
     });
     await loadTasks();
