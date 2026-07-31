@@ -86,10 +86,10 @@ Los estados admitidos son `pending`, `in-progress` y `completed`.
 Las ramas permanentes son `main`, `dev` y `qa`. Las cinco ramas de trabajo propuestas son:
 
 1. `feature/project-foundation`
-2. `feature/create-task`
-3. `feature/task-list-filters`
-4. `feature/edit-task-status`
-5. `hotfix/delete-confirmation`
+2. `feature/task-priority`
+3. `feature/task-sorting`
+4. `feature/task-export`
+5. `hotfix/fix-summary-counts`
 
 Según el requisito particular de la asignación, cada rama de trabajo debe originar un PR hacia `dev`, otro hacia `qa` y otro hacia `main`, para un total de 15 PR cerrados o fusionados. Esto difiere del Git Flow habitual, donde una rama feature normalmente se integra en `dev`; se conserva aquí porque es un criterio explícito de evaluación.
 
