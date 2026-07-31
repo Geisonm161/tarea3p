@@ -7,6 +7,7 @@ class TaskController {
     const tasks = await this.service.list({
       search: url.searchParams.get('search') || '',
       status: url.searchParams.get('status') || 'all',
+      sort: url.searchParams.get('sort') || 'newest',
     });
     this.#sendJson(response, 200, { data: tasks });
   };

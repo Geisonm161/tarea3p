@@ -53,7 +53,7 @@ button:disabled { cursor: not-allowed; opacity: .62; }
 .summary-card--completed .summary-card__icon { background: #def7e9; color: #248453; }
 
 .task-panel { min-height: 290px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
-.toolbar { display: grid; grid-template-columns: 1fr 210px; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) 190px 170px; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .search-field { position: relative; }
 .search-field > span { position: absolute; left: 14px; top: 9px; color: var(--muted); font-size: 1.35rem; }
 .search-field input { padding-left: 43px; }
