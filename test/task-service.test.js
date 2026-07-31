@@ -91,6 +91,23 @@ test('ordena las tareas por prioridad', async () => {
   }
 });
 
+test('calcula el resumen sin depender de filtros', async () => {
+  const { service, temporaryDirectory } = await createTestService();
+  try {
+    await service.create({ title: 'Primera tarea', status: 'pending' });
+    await service.create({ title: 'Segunda tarea', status: 'completed' });
+
+    assert.deepEqual(await service.getSummary(), {
+      total: 2,
+      pending: 1,
+      'in-progress': 0,
+      completed: 1,
+    });
+  } finally {
+    await fs.rm(temporaryDirectory, { recursive: true, force: true });
+  }
+});
+
 test('actualiza y elimina una tarea', async () => {
   const { service, temporaryDirectory } = await createTestService();
   try {
