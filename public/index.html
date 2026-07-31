@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TaskFlow, gestor sencillo de tareas.">
+    <title>TaskFlow | Gestión de tareas</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="TaskFlow, inicio">
+        <span class="brand__mark" aria-hidden="true">✓</span>
+        <span>TaskFlow</span>
+      </a>
+      <p>Organiza tu trabajo, una tarea a la vez.</p>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <span class="eyebrow">Panel de trabajo</span>
+          <h1 id="page-title">Mis tareas</h1>
+          <p>Crea, organiza y completa tus pendientes desde un solo lugar.</p>
+        </div>
+        <button class="button button--primary" id="open-create-button" type="button">
+          <span aria-hidden="true">＋</span> Nueva tarea
+        </button>
+      </section>
+
+      <section class="summary-grid" aria-label="Resumen de tareas">
+        <article class="summary-card summary-card--all">
+          <span class="summary-card__icon" aria-hidden="true">▦</span>
+          <div><strong id="total-count">0</strong><span>Total</span></div>
+        </article>
+        <article class="summary-card summary-card--pending">
+          <span class="summary-card__icon" aria-hidden="true">○</span>
+          <div><strong id="pending-count">0</strong><span>Pendientes</span></div>
+        </article>
+        <article class="summary-card summary-card--progress">
+          <span class="summary-card__icon" aria-hidden="true">◔</span>
+          <div><strong id="progress-count">0</strong><span>En progreso</span></div>
+        </article>
+        <article class="summary-card summary-card--completed">
+          <span class="summary-card__icon" aria-hidden="true">✓</span>
+          <div><strong id="completed-count">0</strong><span>Completadas</span></div>
+        </article>
+      </section>
+
+      <section class="task-panel" aria-label="Listado de tareas">
+        <div class="toolbar">
+          <label class="search-field">
+            <span class="sr-only">Buscar tareas</span>
+            <span aria-hidden="true">⌕</span>
+            <input id="search-input" type="search" placeholder="Buscar por título o descripción…">
+          </label>
+          <label class="filter-field">
+            <span class="sr-only">Filtrar por estado</span>
+            <select id="status-filter">
+              <option value="all">Todos los estados</option>
+              <option value="pending">Pendientes</option>
+              <option value="in-progress">En progreso</option>
+              <option value="completed">Completadas</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="feedback" class="feedback" role="status" hidden></div>
+        <div id="loading-state" class="loading-state" aria-label="Cargando tareas">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Cargando tareas…</span>
+        </div>
+        <div id="task-list" class="task-list" hidden></div>
+        <div id="empty-state" class="empty-state" hidden>
+          <span class="empty-state__icon" aria-hidden="true">✓</span>
+          <h2>No hay tareas por aquí</h2>
+          <p id="empty-message">Crea tu primera tarea para comenzar a organizarte.</p>
+          <button class="button button--secondary" id="empty-create-button" type="button">Crear una tarea</button>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="modal" id="task-modal" aria-labelledby="modal-title">
+      <form id="task-form" novalidate>
+        <header class="modal__header">
+          <div>
+            <span class="eyebrow" id="modal-eyebrow">Nueva tarea</span>
+            <h2 id="modal-title">Agregar tarea</h2>
+          </div>
+          <button class="icon-button" id="close-modal-button" type="button" aria-label="Cerrar">×</button>
+        </header>
+        <div class="modal__body">
+          <input id="task-id" type="hidden">
+          <label class="form-field">
+            <span>Título <small>Obligatorio</small></span>
+            <input id="title-input" name="title" type="text" minlength="3" maxlength="80" required placeholder="Ej.: Preparar presentación">
+            <span class="field-error" id="title-error"></span>
+          </label>
+          <label class="form-field">
+            <span>Descripción <small>Opcional</small></span>
+            <textarea id="description-input" name="description" maxlength="300" rows="4" placeholder="Agrega detalles que te ayuden a completar la tarea"></textarea>
+            <span class="field-meta"><span class="field-error" id="description-error"></span><span id="description-count">0/300</span></span>
+          </label>
+          <label class="form-field">
+            <span>Estado</span>
+            <select id="task-status" name="status">
+              <option value="pending">Pendiente</option>
+              <option value="in-progress">En progreso</option>
+              <option value="completed">Completada</option>
+            </select>
+            <span class="field-error" id="status-error"></span>
+          </label>
+        </div>
+        <footer class="modal__footer">
+          <button class="button button--ghost" id="cancel-button" type="button">Cancelar</button>
+          <button class="button button--primary" id="save-button" type="submit">
+            <span class="button__label">Guardar tarea</span>
+            <span class="button__loading" hidden><span class="spinner spinner--small"></span> Guardando…</span>
+          </button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal--small" id="delete-modal" aria-labelledby="delete-title">
+      <div class="delete-prompt">
+        <span class="delete-prompt__icon" aria-hidden="true">!</span>
+        <h2 id="delete-title">Eliminar tarea</h2>
+        <p>Esta acción eliminará <strong id="delete-task-name"></strong> de forma permanente.</p>
+        <div class="modal__footer">
+          <button class="button button--ghost" id="cancel-delete-button" type="button">Cancelar</button>
+          <button class="button button--danger" id="confirm-delete-button" type="button">
+            <span class="button__label">Eliminar</span>
+            <span class="button__loading" hidden><span class="spinner spinner--small"></span> Eliminando…</span>
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <template id="task-template">
+      <article class="task-card">
+        <button class="task-card__check" type="button" aria-label="Marcar como completada">✓</button>
+        <div class="task-card__content">
+          <div class="task-card__heading">
+            <h2></h2>
+            <span class="status-badge"></span>
+          </div>
+          <p></p>
+          <time></time>
+        </div>
+        <div class="task-card__actions">
+          <button class="icon-button edit-button" type="button" aria-label="Editar tarea">✎</button>
+          <button class="icon-button icon-button--danger delete-button" type="button" aria-label="Eliminar tarea">⌫</button>
+        </div>
+      </article>
+    </template>
+  </body>
+</html>
