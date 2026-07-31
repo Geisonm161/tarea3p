@@ -3,15 +3,20 @@ const AppError = require('../errors/AppError');
 
 const VALID_STATUSES = new Set(['pending', 'in-progress', 'completed']);
 const VALID_PRIORITIES = new Set(['low', 'medium', 'high']);
+const VALID_SORTS = new Set(['newest', 'oldest', 'priority']);
+const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
 
 class TaskService {
   constructor(repository) {
     this.repository = repository;
   }
 
-  async list({ search = '', status = 'all' } = {}) {
+  async list({ search = '', status = 'all', sort = 'newest' } = {}) {
     if (status !== 'all' && !VALID_STATUSES.has(status)) {
       throw new AppError('El estado indicado no es válido.', 400);
+    }
+    if (!VALID_SORTS.has(sort)) {
+      throw new AppError('El criterio de orden indicado no es válido.', 400);
     }
 
     const normalizedSearch = search.trim().toLocaleLowerCase('es');
@@ -25,7 +30,15 @@ class TaskService {
           .toLocaleLowerCase('es')
           .includes(normalizedSearch);
       })
-      .sort((first, second) => second.createdAt.localeCompare(first.createdAt));
+      .sort((first, second) => {
+        if (sort === 'oldest') return first.createdAt.localeCompare(second.createdAt);
+        if (sort === 'priority') {
+          const priorityDifference = PRIORITY_WEIGHT[second.priority || 'medium']
+            - PRIORITY_WEIGHT[first.priority || 'medium'];
+          return priorityDifference || second.createdAt.localeCompare(first.createdAt);
+        }
+        return second.createdAt.localeCompare(first.createdAt);
+      });
   }
 
   async getById(id) {
