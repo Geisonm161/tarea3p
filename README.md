@@ -8,6 +8,7 @@ TaskFlow es una aplicación CRUD para administrar tareas. El proyecto demuestra 
 - Asignar prioridad baja, media o alta a cada tarea.
 - Consultar y buscar tareas por título o descripción.
 - Filtrar tareas por estado.
+- Ordenar tareas por fecha o prioridad.
 - Editar datos y marcar tareas como completadas.
 - Eliminar tareas mediante un diálogo de confirmación.
 - Interfaz responsive con estados de carga, error y listado vacío.
@@ -59,7 +60,7 @@ test/                    Pruebas unitarias y de integración
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |
-| `GET` | `/api/tasks` | Lista tareas; acepta `search` y `status` |
+| `GET` | `/api/tasks` | Lista tareas; acepta `search`, `status` y `sort` |
 | `GET` | `/api/tasks/:id` | Consulta una tarea |
 | `POST` | `/api/tasks` | Crea una tarea |
 | `PUT` | `/api/tasks/:id` | Actualiza una tarea |
